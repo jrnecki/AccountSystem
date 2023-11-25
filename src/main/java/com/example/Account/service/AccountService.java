@@ -12,9 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.Account.type.AccountStatus.IN_USE;
+import static com.example.Account.type.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor // 필수 인자만 입력받는 생성자를 만들어주는 어노테이션
@@ -33,7 +37,7 @@ public class AccountService {
     @Transactional
     public AccountDto createAccount(Long userId, Long initialBalance){
         AccountUser accountUser = accountUserRespository.findById(userId)
-                .orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
         validateCreateAccount(accountUser);
         // 계좌가 있다면 가장 최근 만들어진 계좌번호 +1
         // 계좌가 없다면 100000000 으로 만들어줌.
@@ -54,7 +58,7 @@ public class AccountService {
 
     private void validateCreateAccount(AccountUser accountUser) {
         if(accountRepository.countByAccountUser(accountUser) == 10){
-            throw new AccountException(ErrorCode.MAX_COUNT_PER_USER);
+            throw new AccountException(MAX_COUNT_PER_USER);
         }
     }
 
@@ -69,9 +73,9 @@ public class AccountService {
     @Transactional
     public AccountDto deleteAccount(Long userId, String accountNumber) {
         AccountUser accountUser = accountUserRespository.findById(userId)
-                .orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
         Account account = accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new AccountException(ACCOUNT_NOT_FOUND));
         validateDeleteeAccount(accountUser,account);
 
         account.setAccountStatus(AccountStatus.UNREGISTERED);
@@ -84,13 +88,27 @@ public class AccountService {
 
     private void validateDeleteeAccount(AccountUser accountUser, Account account) {
         if(!Objects.equals(accountUser.getId(),account.getAccountUser().getId())){
-            throw new AccountException(ErrorCode.USER_ACCOUNT_UN_MATCH);
+            throw new AccountException(USER_ACCOUNT_UN_MATCH);
         }
         if(account.getAccountStatus() == AccountStatus.UNREGISTERED){
-            throw new AccountException(ErrorCode.ACCOUNT_ALREADY_UNREGISTERED);
+            throw new AccountException(ACCOUNT_ALREADY_UNREGISTERED);
         }
         if(account.getBalance() > 0){
-            throw new AccountException(ErrorCode.BALANCE_NOT_EMPTY);
+            throw new AccountException(BALANCE_NOT_EMPTY);
         }
+    }
+    @Transactional
+    public List<AccountDto> getAccountsByUserId(Long userId) {
+        AccountUser accountUser = accountUserRespository
+                .findById(userId)
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+
+        List<Account> accounts = accountRepository
+                .findByAccountUser(accountUser);
+
+        // List<Account> -> List<AccountDto>
+        return accounts.stream()
+                .map(AccountDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }
