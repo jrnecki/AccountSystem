@@ -50,9 +50,9 @@ public class TransactionService {
 
         account.useBalance(amount);
 
-        return TransactionDto.fromEntity(transactionRepository.save(
+        return TransactionDto.fromEntity(
                 saveAndGetTransaction(USE,S,account,amount)
-        ));
+        );
 
     }
 
@@ -82,12 +82,12 @@ public class TransactionService {
             Long amount) {
             return transactionRepository.save(
                     Transaction.builder()
-                            .transactionType(USE)
+                            .transactionType(transactionType)
                             .transactionResultType(transactionResultType)
                             .account(account)
                             .amount(amount)
                             .balanceSnapshot(account.getBalance())
-                            .transactionalId(UUID.randomUUID().toString().replace("-",""))
+                            .transactionId(UUID.randomUUID().toString().replace("-",""))
                             .transactedAt(LocalDateTime.now())
                             .build()
             );
@@ -104,9 +104,7 @@ public class TransactionService {
         validateCancelBalance(trasaction,account,amount);
         account.cancelBalance(amount);
 
-        return TransactionDto.fromEntity(transactionRepository.save(
-                saveAndGetTransaction(CANCEL,S,account,amount)
-        ));
+        return TransactionDto.fromEntity(saveAndGetTransaction(CANCEL,S,account,amount));
     }
 
     private void validateCancelBalance(Transaction trasaction, Account account, Long amount) {
@@ -127,5 +125,11 @@ public class TransactionService {
                 .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         saveAndGetTransaction(CANCEL,F,account,amount);
+    }
+
+    public TransactionDto queryTransaction(String transactionId) {
+        return TransactionDto.fromEntity(transactionRepository.findByTransactionId(transactionId)
+                .orElseThrow(() -> new AccountException(ErrorCode.TRANSACTION_NOT_FOUND))
+        );
     }
 }

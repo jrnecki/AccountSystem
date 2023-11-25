@@ -5,6 +5,7 @@ import com.example.Account.domain.AccountUser;
 import com.example.Account.dto.AccountDto;
 import com.example.Account.exception.AccountException;
 import com.example.Account.repository.AccountUserRespository;
+import com.example.Account.repository.TransactionRepository;
 import com.example.Account.type.AccountStatus;
 import com.example.Account.repository.AccountRepository;
 import com.example.Account.type.ErrorCode;
@@ -325,4 +326,6 @@ class AccountServiceTest {
         assertEquals(ErrorCode.USER_NOT_FOUND,accountException.getErrorCode());
 
     }
+
+
 }

@@ -32,7 +32,7 @@ public class Transaction {
     private Long amount;
     private Long balanceSnapshot;
 
-    private String transactionalId;
+    private String transactionId;
     private LocalDateTime transactedAt;
 
     // 모든 entity의 공통적인 필드
