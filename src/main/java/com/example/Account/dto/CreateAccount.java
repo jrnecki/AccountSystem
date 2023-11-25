@@ -9,13 +9,15 @@ import java.time.LocalDateTime;
 public class CreateAccount {
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Request{
         @NotNull
         @Min(1)
         private Long userId;
 
         @NotNull
-        @Min(100)
+        @Min(0)
         private Long initialBalance;
     }
 
