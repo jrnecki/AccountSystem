@@ -4,9 +4,11 @@ import com.example.Account.domain.Account;
 import com.example.Account.dto.AccountDto;
 import com.example.Account.dto.CreateAccount;
 import com.example.Account.dto.DeleteAccount;
+import com.example.Account.exception.AccountException;
 import com.example.Account.type.AccountStatus;
 import com.example.Account.service.AccountService;
 import com.example.Account.service.RedisTestService;
+import com.example.Account.type.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -130,6 +132,23 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.accountNumber").value("1234567890"))
                 .andDo(print());
+    }
+
+    @Test
+    void failGetAccount() throws Exception {
+        // given
+        given(accountService.getAccount(anyLong()))
+                .willThrow((new AccountException(ErrorCode.ACCOUNT_NOT_FOUND)));
+
+        // when
+        // then
+        mockMvc.perform(get("/account/876"))
+                .andDo(print())
+                .andExpect(jsonPath("$.errorCode")
+                        .value("ACCOUNT_NOT_FOUND"))
+                .andExpect(jsonPath("$.errorMessage")
+                        .value("계좌가 없습니다."))
+                .andExpect(status().isOk());
     }
 
 }

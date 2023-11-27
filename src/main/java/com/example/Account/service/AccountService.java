@@ -7,14 +7,12 @@ import com.example.Account.exception.AccountException;
 import com.example.Account.repository.AccountRepository;
 import com.example.Account.repository.AccountUserRespository;
 import com.example.Account.type.AccountStatus;
-import com.example.Account.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.Account.type.AccountStatus.IN_USE;
