@@ -1,7 +1,6 @@
 package com.example.Account.dto;
 
 import com.example.Account.aop.AccountLockIdInterface;
-import com.example.Account.domain.Account;
 import com.example.Account.type.TransactionResultType;
 import lombok.*;
 
@@ -9,10 +8,10 @@ import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 
-public class UseBalance {
+public class CancelBalance {
     /**
      * {
-     *     "userId":1,
+     *     "transactionId":"asdasdfas",
      *     "accountNumber":"1000000000",
      *     "amount":1000
      * }
@@ -23,8 +22,7 @@ public class UseBalance {
     @AllArgsConstructor
     public static class Request implements AccountLockIdInterface {
         @NotNull
-        @Min(1)
-        private Long userId;
+        private String transactionId;
 
         @NotBlank
         @Size(min=10, max=10)

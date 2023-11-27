@@ -7,9 +7,8 @@ import com.example.Account.dto.DeleteAccount;
 import com.example.Account.exception.AccountException;
 import com.example.Account.type.AccountStatus;
 import com.example.Account.service.AccountService;
-import com.example.Account.service.RedisTestService;
+import com.example.Account.service.LockService;
 import com.example.Account.type.ErrorCode;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ class AccountControllerTest {
     @MockBean
     private AccountService accountService;
     @MockBean
-    private RedisTestService redisTestService;
+    private LockService lockService;
     @Autowired
     private MockMvc mockMvc;
 
