@@ -17,17 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class AccountUser {
-    @Id
-    @GeneratedValue
-    private Long id;
-
+public class AccountUser extends BaseEntity{
     private String name;
 
-    // 모든 entity의 공통적인 필드
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 }

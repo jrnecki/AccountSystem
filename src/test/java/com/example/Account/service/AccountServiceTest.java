@@ -43,9 +43,8 @@ class AccountServiceTest {
         // given
         AccountUser user = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
-
+        user.setId(12L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(user));
         given(accountRepository.findFirstByOrderByIdDesc())
@@ -75,9 +74,8 @@ class AccountServiceTest {
         // given
         AccountUser user = AccountUser.builder()
                 .name("Pobi")
-                .id(15L)
                 .build();
-
+        user.setId(12L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(user));
         given(accountRepository.findFirstByOrderByIdDesc())
@@ -94,7 +92,7 @@ class AccountServiceTest {
         AccountDto accountDto = accountService.createAccount(1L,1000L);
         // then
         verify(accountRepository, times(1)).save(captor.capture());
-        assertEquals(15L,accountDto.getUserId());
+        assertEquals(12L,accountDto.getUserId());
         assertEquals("1000000000",captor.getValue().getAccountNumber());
 
     }
@@ -119,8 +117,8 @@ class AccountServiceTest {
     void createAccount_maxAccountIs10(){
         // given
         AccountUser user = AccountUser.builder()
-                .id(15L)
                 .name("Pobi").build();
+        user.setId(15L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(user));
         given(accountRepository.countByAccountUser(any()))
@@ -137,8 +135,8 @@ class AccountServiceTest {
         // given
         AccountUser user = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
+        user.setId(12L);
 
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(user));
@@ -178,8 +176,8 @@ class AccountServiceTest {
         // given
         AccountUser user = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
+        user.setId(12L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(user));
         given(accountRepository.findByAccountNumber(anyString()))
@@ -198,13 +196,12 @@ class AccountServiceTest {
         // given
         AccountUser pobi = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
-
+        pobi.setId(12L);
         AccountUser harry = AccountUser.builder()
                 .name("Harry")
-                .id(13L)
                 .build();
+        harry.setId(13L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(pobi));
 
@@ -228,8 +225,8 @@ class AccountServiceTest {
         // given
         AccountUser pobi = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
+        pobi.setId(12L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(pobi));
 
@@ -253,8 +250,8 @@ class AccountServiceTest {
         // given
         AccountUser pobi = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
+        pobi.setId(12L);
         given(accountUserRespository.findById(anyLong()))
                 .willReturn(Optional.of(pobi));
 
@@ -278,8 +275,8 @@ class AccountServiceTest {
         // given
         AccountUser pobi = AccountUser.builder()
                 .name("Pobi")
-                .id(12L)
                 .build();
+        pobi.setId(12L);
         List<Account> accounts = Arrays.asList(
                 Account.builder()
                         .accountUser(pobi)

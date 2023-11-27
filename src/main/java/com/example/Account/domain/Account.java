@@ -16,15 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// java class라기 보다는 디비에 넣을 table 설정이라고 보면된다.
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Account {
-    // pk로 지정
-    @Id
-    @GeneratedValue
-    Long id;
-
+public class Account extends BaseEntity{
     @ManyToOne // 1:n
     private AccountUser accountUser;
     private String accountNumber;
