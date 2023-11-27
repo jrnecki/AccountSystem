@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.example.Account.type.AccountStatus.IN_USE;
@@ -37,11 +39,21 @@ public class AccountService {
         AccountUser accountUser = getAccountUser(userId);
         validateCreateAccount(accountUser);
         // 계좌가 있다면 가장 최근 만들어진 계좌번호 +1
-        // 계좌가 없다면 100000000 으로 만들어줌.
-        String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
-                .map(account -> (Integer.parseInt(account.getAccountNumber())+1)+"")
-                .orElse("1000000000");
-
+        // 계좌가 없다면 10자리 정수 랜덤 생성
+        String newAccountNumber="";
+        Optional<Account> account = accountRepository.findFirstByOrderByIdDesc();
+        if(account.isEmpty()){
+            Random random = new Random();
+            for(int i=1; i<=10; i++){
+                newAccountNumber+=random.nextInt(8)+1;
+            }
+        }else{
+            newAccountNumber= String.valueOf(Long.parseLong(account.get().getAccountNumber())+1);
+        }
+        // 동일한 계좌있는지 확인
+        if(accountRepository.findByAccountNumber(newAccountNumber).isPresent()){
+            throw new AccountException(ACCOUNT_ALREADY_EXISTS);
+        }
         return AccountDto.fromEntity(accountRepository.save(
                 Account.builder()
                         .accountUser(accountUser)

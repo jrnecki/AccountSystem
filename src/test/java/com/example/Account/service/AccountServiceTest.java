@@ -5,7 +5,6 @@ import com.example.Account.domain.AccountUser;
 import com.example.Account.dto.AccountDto;
 import com.example.Account.exception.AccountException;
 import com.example.Account.repository.AccountUserRespository;
-import com.example.Account.repository.TransactionRepository;
 import com.example.Account.type.AccountStatus;
 import com.example.Account.repository.AccountRepository;
 import com.example.Account.type.ErrorCode;
@@ -16,8 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
