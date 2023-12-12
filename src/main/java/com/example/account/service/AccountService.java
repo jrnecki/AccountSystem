@@ -38,27 +38,22 @@ public class AccountService {
     public AccountDto createAccount(Long userId, Long initialBalance){
         AccountUser accountUser = getAccountUser(userId);
         validateCreateAccount(accountUser);
-        // 계좌가 있다면 가장 최근 만들어진 계좌번호 +1
-        // 계좌가 없다면 10자리 정수 랜덤 생성
-        String newAccountNumber="";
+        // 계좌번호 랜덤 생성
+        StringBuilder newAccountNumber= new StringBuilder();
         Optional<Account> account = accountRepository.findFirstByOrderByIdDesc();
-        if(account.isEmpty()){
-            Random random = new Random();
-            for(int i=1; i<=10; i++){
-                newAccountNumber+=random.nextInt(8)+1;
-            }
-        }else{
-            newAccountNumber= String.valueOf(Long.parseLong(account.get().getAccountNumber())+1);
+        Random random = new Random();
+        for(int i=1; i<=10; i++){
+            newAccountNumber.append(random.nextInt(8) + 1);
         }
         // 동일한 계좌있는지 확인
-        if(accountRepository.findByAccountNumber(newAccountNumber).isPresent()){
+        if(accountRepository.findByAccountNumber(newAccountNumber.toString()).isPresent()){
             throw new AccountException(ACCOUNT_ALREADY_EXISTS);
         }
         return AccountDto.fromEntity(accountRepository.save(
                 Account.builder()
                         .accountUser(accountUser)
                         .accountStatus(IN_USE)
-                        .accountNumber(newAccountNumber)
+                        .accountNumber(newAccountNumber.toString())
                         .balance(initialBalance)
                         .registeredAt(LocalDateTime.now())
                         .build()));
