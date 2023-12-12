@@ -19,6 +19,9 @@ public class RedisRepositoryConfig {
     @Bean // 여기서 딱 한번 생성된 redisonClient가 여러군데에서 쓰임.
     public RedissonClient redisonClient(){
         Config config = new Config();
+
+
+
         config.useSingleServer()
                 .setAddress("redis://"+redisHost+":"+redisPort);
 

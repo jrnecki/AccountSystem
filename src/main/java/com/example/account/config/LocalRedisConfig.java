@@ -8,6 +8,8 @@ import redis.embedded.RedisServer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Objects;
+
 @Slf4j
 @Configuration
 public class LocalRedisConfig {
@@ -20,11 +22,14 @@ public class LocalRedisConfig {
     private RedisServer redisServer;
     @PostConstruct
     public void startRedis(){
-        redisServer = RedisServer.builder()
-                .port(redisPort)
-                .setting("maxmemory "+redisMemory)
-                .build();
-        redisServer.start();
+        try{
+            redisServer = RedisServer.builder()
+                    .port(redisPort)
+                    .build();
+            redisServer.start();
+        }catch (Exception e){
+            log.error("",e);
+        }
     }
 
     @PreDestroy

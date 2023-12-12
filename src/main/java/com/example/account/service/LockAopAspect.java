@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LockAopAspect {
     private final LockService lockService;
-    @Around("@annotation(com.example.Account.aop.Accountlock)" +
+    @Around("@annotation(com.example.account.aop.Accountlock)" +
             "&& args(request)")
     public Object aroundMethod(
             ProceedingJoinPoint pjp,

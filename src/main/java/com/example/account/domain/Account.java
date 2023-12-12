@@ -50,4 +50,7 @@ public class Account extends BaseEntity{
     }
 
 
+    public void addBalance(Long amount) {
+        balance+=amount;
+    }
 }
