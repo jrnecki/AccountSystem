@@ -8,5 +8,6 @@ import lombok.*;
 @Builder
 public class AccountInfo { // client <-> controller
     private String accountNumber;
+    private String username;
     private Long balance;
 }

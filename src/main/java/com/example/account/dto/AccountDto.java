@@ -1,6 +1,7 @@
 package com.example.account.dto;
 
 import com.example.account.domain.Account;
+import com.example.account.type.Bank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 public class AccountDto {
     private Long userId;
     private String accountNumber;
+    private Bank bank;
     private Long balance;
     private LocalDateTime registeredAt;
     private LocalDateTime unRegisteredAt;
@@ -25,6 +27,7 @@ public class AccountDto {
         return AccountDto.builder()
                 .userId(account.getAccountUser().getId())
                 .accountNumber(account.getAccountNumber())
+                .bank(account.getBank())
                 .balance(account.getBalance())
                 .registeredAt(account.getRegisteredAt())
                 .unRegisteredAt(account.getRegisteredAt())

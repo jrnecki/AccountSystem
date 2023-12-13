@@ -10,6 +10,7 @@ public enum ErrorCode {
     INVALID_REQUEST("잘못된 요청입니다."),
     USER_NOT_FOUND("사용자가 없습니다."),
     ACCOUNT_NOT_FOUND("계좌가 없습니다."),
+    BANK_NOT_FOUND("은행이 없습니다."),
     ACCOUNT_ALREADY_EXISTS("이미 있는 계좌입니다."),
     ACCOUNT_TRANSACTION_LOCK("해당 계좌는 사용 중입니다."),
     TRANSACTION_NOT_FOUND("해당 거래가 없습니다."),

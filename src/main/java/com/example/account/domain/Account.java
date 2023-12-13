@@ -2,6 +2,7 @@ package com.example.account.domain;
 
 import com.example.account.exception.AccountException;
 import com.example.account.type.AccountStatus;
+import com.example.account.type.Bank;
 import com.example.account.type.ErrorCode;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,6 +21,8 @@ public class Account extends BaseEntity{
     @ManyToOne // 1:n
     private AccountUser accountUser;
     private String accountNumber;
+    @Enumerated(EnumType.STRING)
+    private Bank bank;
 
     // db상에 0또는1이 아닌 문자열형태로 저장
     @Enumerated(EnumType.STRING)
@@ -29,11 +32,6 @@ public class Account extends BaseEntity{
     private LocalDateTime registeredAt;
     private LocalDateTime unRegisteredAt;
 
-    // 모든 entity의 공통적인 필드
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     public void useBalance(Long amount){
         if(amount > balance){

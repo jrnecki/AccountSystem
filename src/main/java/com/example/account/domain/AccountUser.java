@@ -1,8 +1,10 @@
 package com.example.account.domain;
 
+import com.example.account.type.Bank;
 import lombok.*;
 
 import javax.persistence.Entity;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,5 +14,4 @@ import javax.persistence.Entity;
 @Entity
 public class AccountUser extends BaseEntity{
     private String name;
-
 }

@@ -18,6 +18,11 @@ public class TransactionDto {
     private TransactionResultType transactionResultType;
     private Account account;
     private Long amount;
+    private String toAccount;
+    private String fromUsername;
+    private String toUsername;
+
+    private String transactionMessage;
     private Long balanceSnapshot;
     private String transactionId;
     private LocalDateTime transactedAt;
@@ -28,10 +33,11 @@ public class TransactionDto {
                 .transactionType(transaction.getTransactionType())
                 .transactionResultType(transaction.getTransactionResultType())
                 .amount(transaction.getAmount())
+                .toAccount(transaction.getToAccount())
+                .transactionMessage(transaction.getTransactionMessage())
                 .balanceSnapshot(transaction.getBalanceSnapshot())
                 .transactionId(transaction.getTransactionId())
                 .transactedAt(transaction.getTransactedAt())
                 .build();
-
     }
 }

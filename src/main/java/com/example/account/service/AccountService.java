@@ -7,6 +7,7 @@ import com.example.account.exception.AccountException;
 import com.example.account.repository.AccountRepository;
 import com.example.account.repository.AccountUserRespository;
 import com.example.account.type.AccountStatus;
+import com.example.account.type.Bank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,9 +36,11 @@ public class AccountService {
      *   계좌 저장, 그 정보 전달
      */
     @Transactional
-    public AccountDto createAccount(Long userId, Long initialBalance){
+    public AccountDto createAccount(
+            Long userId, Long initialBalance, String bank){
+
         AccountUser accountUser = getAccountUser(userId);
-        validateCreateAccount(accountUser);
+        validateCreateAccount(accountUser,bank);
         // 계좌번호 랜덤 생성
         StringBuilder newAccountNumber= new StringBuilder();
         Optional<Account> account = accountRepository.findFirstByOrderByIdDesc();
@@ -49,20 +52,31 @@ public class AccountService {
         if(accountRepository.findByAccountNumber(newAccountNumber.toString()).isPresent()){
             throw new AccountException(ACCOUNT_ALREADY_EXISTS);
         }
-        return AccountDto.fromEntity(accountRepository.save(
-                Account.builder()
-                        .accountUser(accountUser)
-                        .accountStatus(IN_USE)
-                        .accountNumber(newAccountNumber.toString())
-                        .balance(initialBalance)
-                        .registeredAt(LocalDateTime.now())
-                        .build()));
+        try{
+            return AccountDto.fromEntity(accountRepository.save(
+                    Account.builder()
+                            .accountUser(accountUser)
+                            .accountStatus(IN_USE)
+                            .accountNumber(newAccountNumber.toString())
+                            .balance(initialBalance)
+                            .bank(Bank.valueOf(bank))
+                            .registeredAt(LocalDateTime.now())
+                            .build()));
+
+        }catch (AccountException e){
+            throw new AccountException(BANK_NOT_FOUND);
+        }
 
     }
 
-    private void validateCreateAccount(AccountUser accountUser) {
+    private void validateCreateAccount(AccountUser accountUser, String bank) {
         if(accountRepository.countByAccountUser(accountUser) == 10){
             throw new AccountException(MAX_COUNT_PER_USER);
+        }
+        try{
+            Bank.valueOf(bank);
+        }catch (AccountException e){
+            throw new AccountException(BANK_NOT_FOUND);
         }
     }
 

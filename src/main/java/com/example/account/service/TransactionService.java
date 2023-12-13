@@ -8,10 +8,7 @@ import com.example.account.exception.AccountException;
 import com.example.account.repository.AccountRepository;
 import com.example.account.repository.AccountUserRespository;
 import com.example.account.repository.TransactionRepository;
-import com.example.account.type.AccountStatus;
-import com.example.account.type.ErrorCode;
-import com.example.account.type.TransactionResultType;
-import com.example.account.type.TransactionType;
+import com.example.account.type.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,25 +35,46 @@ public class TransactionService {
      * 계좌가 이미 해지 상태인 경우, 거래금액이 잔액보다 큰 경우,
      * 거래 금액이 너무 작거나 큰 경우 실패 응답
      */
+
     @Transactional
-    public TransactionDto useBalance
-            (Long userId, String accountNumber, Long amount){
-        AccountUser user = accountUserRespository.findById(userId)
-                .orElseThrow(()-> new AccountException(ErrorCode.USER_NOT_FOUND));
+    public TransactionDto useBalance(
+            Long userId, String accountNumber, Long amount,
+            String toAccountNumber, String bank,
+            String transactionMessage) {
+
+        // 보내는 사람
+        AccountUser fromUser = accountUserRespository.findById(userId)
+                .orElseThrow(()->new AccountException(ErrorCode.USER_NOT_FOUND));
         Account account = accountRepository.findByAccountNumber(accountNumber)
-                        .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
-        validateUseBalance(user,account,amount);
+                .orElseThrow(()-> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+        // 받는 계좌
+        Account toAccount = accountRepository.
+                findByAccountNumberAndBank(toAccountNumber,Bank.valueOf(bank))
+                .orElseThrow(()->new AccountException(ErrorCode.USER_NOT_FOUND));
+
+        log.info("상대이름: "+toAccount.getAccountUser().getName());
 
         account.useBalance(amount);
+        toAccount.addBalance(amount);
+        saveAndGetTransaction(SEND,S,account,amount,transactionMessage);
 
         return TransactionDto.fromEntity(
-                saveAndGetTransaction(USE,S,account,amount)
+                Transaction.builder()
+                        .account(account)
+                        .amount(amount)
+                        .toAccount(toAccount.getAccountNumber())
+                        .transactionMessage(transactionMessage)
+                        .balanceSnapshot(account.getBalance())
+                        .transactionId(UUID.randomUUID().toString().replace("-",""))
+                        .transactedAt(LocalDateTime.now())
+                        .build()
         );
-
     }
 
 
-    private void validateUseBalance(AccountUser user, Account account, Long amount) {
+
+    private void validateUseBalance(AccountUser user, Account account,
+                                    Long amount, Account toAccount, String bank) {
         if(!Objects.equals(user.getId(), account.getAccountUser().getId())){
             throw new AccountException(ErrorCode.USER_ACCOUNT_UN_MATCH);
         }
@@ -66,25 +84,30 @@ public class TransactionService {
         if(account.getBalance() < amount){
             throw new AccountException(ErrorCode.AMOUNT_EXCEED_BALANCE);
         }
+        if(toAccount.getAccountStatus() != AccountStatus.IN_USE){
+            throw new AccountException(ErrorCode.ACCOUNT_ALREADY_UNREGISTERED);
+        }
+
     }
     @Transactional
     public void saveFaileUseTransaction(String accountNumber, Long amount) {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        saveAndGetTransaction(USE,F,account,amount);
+        saveAndGetTransaction(USE,F,account,amount,"");
     }
     private  Transaction saveAndGetTransaction(
             TransactionType transactionType,
             TransactionResultType transactionResultType,
             Account account,
-            Long amount) {
+            Long amount, String transactionMessage) {
             return transactionRepository.save(
                     Transaction.builder()
                             .transactionType(transactionType)
                             .transactionResultType(transactionResultType)
                             .account(account)
                             .amount(amount)
+                            .transactionMessage(transactionMessage)
                             .balanceSnapshot(account.getBalance())
                             .transactionId(UUID.randomUUID().toString().replace("-",""))
                             .transactedAt(LocalDateTime.now())
@@ -103,7 +126,7 @@ public class TransactionService {
         validateCancelBalance(trasaction,account,amount);
         account.cancelBalance(amount);
 
-        return TransactionDto.fromEntity(saveAndGetTransaction(CANCEL,S,account,amount));
+        return TransactionDto.fromEntity(saveAndGetTransaction(CANCEL,S,account,amount,""));
     }
 
     private void validateCancelBalance(Transaction trasaction, Account account, Long amount) {
@@ -123,7 +146,7 @@ public class TransactionService {
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        saveAndGetTransaction(CANCEL,F,account,amount);
+        saveAndGetTransaction(CANCEL,F,account,amount,"");
     }
 
     public TransactionDto queryTransaction(String transactionId) {

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 public class AccountController {
@@ -22,7 +21,7 @@ public class AccountController {
             @RequestBody @Valid CreateAccount.Request request){
         return CreateAccount.Response.from(
                 accountService.createAccount(
-                request.getUserId(),request.getInitialBalance()
+                request.getUserId(),request.getInitialBalance(),request.getBank()
                 )
         );
     }

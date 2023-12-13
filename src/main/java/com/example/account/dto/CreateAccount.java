@@ -1,5 +1,6 @@
 package com.example.account.dto;
 
+import com.example.account.type.Bank;
 import lombok.*;
 
 import javax.validation.constraints.Min;
@@ -19,6 +20,9 @@ public class CreateAccount {
         @NotNull
         @Min(100)
         private Long initialBalance;
+
+        @NotNull
+        private String bank;
     }
 
     @Getter

@@ -1,6 +1,7 @@
 package com.example.account.dto;
 
 import com.example.account.aop.AccountLockIdInterface;
+import com.example.account.type.Bank;
 import com.example.account.type.TransactionResultType;
 import lombok.*;
 
@@ -33,6 +34,12 @@ public class UseBalance {
         @Min(10)
         @Max(1000_000_000)
         private Long amount;
+
+        @NotBlank
+        @Size(min=10, max=10)
+        private String toAccountNumber;
+        private String bank;
+        private String transactionMessage;
     }
 
     /**
@@ -54,6 +61,7 @@ public class UseBalance {
         private TransactionResultType transactionResultType;
         private String transactionId;
         private Long amount;
+        private String toUsername;
         private LocalDateTime transactedAt;
 
         public static Response from(TransactionDto transactionDto) {
@@ -62,6 +70,7 @@ public class UseBalance {
                     .transactionResultType(transactionDto.getTransactionResultType())
                     .transactionId(transactionDto.getTransactionId())
                     .amount(transactionDto.getAmount())
+                    .toUsername(transactionDto.getToUsername())
                     .transactedAt(transactionDto.getTransactedAt())
                     .build();
 

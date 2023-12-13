@@ -1,5 +1,6 @@
 package com.example.account.domain;
 
+import com.example.account.type.Bank;
 import com.example.account.type.TransactionResultType;
 import com.example.account.type.TransactionType;
 import lombok.*;
@@ -22,6 +23,8 @@ public class Transaction extends BaseEntity {
     @ManyToOne
     private Account account;
     private Long amount;
+    private String toAccount;
+    private String transactionMessage;
     private Long balanceSnapshot;
 
     private String transactionId;
